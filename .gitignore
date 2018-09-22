@@ -1,3 +1,4 @@
 /obj
 /wwwroot
 /appsettings.Development.json
+/.vscode
