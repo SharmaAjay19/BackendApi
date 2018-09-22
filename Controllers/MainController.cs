@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace BackendApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ValuesController : ControllerBase
+    public class MainController : ControllerBase
     {
         // GET api/values
         [HttpGet]
@@ -25,9 +26,14 @@ namespace BackendApi.Controllers
         }
 
         // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("/UserLogin")]
+        [ActionName("/UserLogin")]
+        public IActionResult Post([FromBody] dynamic login_body)
         {
+            dynamic result = new JObject();
+            result.username = login_body.username;
+            result.name = "Ajay Sharma";
+            return new ObjectResult(result);
         }
 
         // PUT api/values/5
