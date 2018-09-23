@@ -47,7 +47,7 @@ namespace BackendApi.Controllers
                 userProfile = null;
             }
             if (userProfile == null)
-                return new NoContentResult();
+                return NotFound("User not found");
             if (userProfile.Password == login_body.password.ToString()){
                 return new ObjectResult(JsonConvert.DeserializeObject<ReturnUserProfileEntity>(JsonConvert.SerializeObject(userProfile)));
             }
