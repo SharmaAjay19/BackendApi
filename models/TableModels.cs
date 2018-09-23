@@ -22,4 +22,8 @@ namespace BackendApi.Models{
         public string Password {get; set;}
         public string LastLogin {get; set;}
     }
+
+    public class ReturnUserProfileEntity: TableEntity {
+        public string LastLogin {get; set;}
+    }
 }

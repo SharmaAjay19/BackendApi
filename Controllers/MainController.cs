@@ -44,7 +44,7 @@ namespace BackendApi.Controllers
             if (userProfile == null)
                 return new NoContentResult();
             if (userProfile.Password == login_body.password.ToString()){
-                return new ObjectResult(userProfile);
+                return new ObjectResult((ReturnUserProfileEntity)userProfile);
             }
             return BadRequest("Incorrect Password");
         }
