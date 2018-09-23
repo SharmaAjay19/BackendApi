@@ -39,8 +39,13 @@ namespace BackendApi.Controllers
         [ActionName("/UserLogin")]
         public IActionResult UserLogin([FromBody] dynamic login_body)
         {
-            var userProfile = getEntityById<UserProfileEntity>("UserProfiles", "UserProfile", login_body.username.ToString()).GetAwaiter().GetResult();
-            Console.Write(userProfile.Password);
+            UserProfileEntity userProfile = null;
+            try{
+                userProfile = getEntityById<UserProfileEntity>("UserProfiles", "UserProfile", login_body.username.ToString()).GetAwaiter().GetResult();
+            }
+            catch{
+                userProfile = null;
+            }
             if (userProfile == null)
                 return new NoContentResult();
             if (userProfile.Password == login_body.password.ToString()){
@@ -56,8 +61,13 @@ namespace BackendApi.Controllers
             UserProfileEntity userProfile = new UserProfileEntity(register_body.username.ToString());
             userProfile.Password = register_body.password.ToString();
             userProfile.LastLogin = DateTime.Now.ToString("yyyyMMddHHmmss");
-            await addEntityToTable("UserProfiles", userProfile);
-            return new OkObjectResult("Registered Successfully");
+            try{
+                await addEntityToTable("UserProfiles", userProfile);
+                return new OkObjectResult("Registered Successfully");
+            }
+            catch{
+                return BadRequest("Username is taken");
+            }
         }
 
         [HttpPost("/AddUserData")]
