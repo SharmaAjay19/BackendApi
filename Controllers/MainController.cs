@@ -72,11 +72,10 @@ namespace BackendApi.Controllers
 
         [HttpPost("/AddUserData")]
         [ActionName("/AddUserData")]
-        public IActionResult AddUserData([FromBody] dynamic user_data_body)
+        public IActionResult AddUserData([FromBody] UserDataEntity userData)
         {
-            UserDataEntity userData = new UserDataEntity(user_data_body.username.ToString(), Guid.NewGuid().ToString());
-            userData.DataCol1 = user_data_body.DataCol1.ToString();
-            userData.DataCol2 = user_data_body.DataCol2.ToString();
+            userData.PartitionKey = userData.username;
+            userData.RowKey = userData.id;
             var result = addEntityToTable("UserData", userData).GetAwaiter().GetResult();
             return new ObjectResult(result.Result);
         }

@@ -8,8 +8,10 @@ namespace BackendApi.Models{
         }
 
         public UserDataEntity(){}
-        public string DataCol1 {get; set;}
-        public string DataCol2 {get; set;}
+        public string areaName {get; set;}
+        public string id {get; set;}
+        public string polygon {get; set;}
+        public string username {get; set;}
     }
 
     public class UserProfileEntity: TableEntity {
