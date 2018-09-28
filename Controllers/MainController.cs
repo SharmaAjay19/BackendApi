@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -17,8 +18,14 @@ namespace BackendApi.Controllers
     {
         CloudStorageAccount storageAccount;
         CloudTableClient tableClient;
-
+        SqlConnection sqlConnection;
         public MainController(){
+            SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
+            builder.DataSource = "ajsharm.database.windows.net"; 
+            builder.UserID = "ajsharm";            
+            builder.Password = "Ime&144!";     
+            builder.InitialCatalog = "areamarket";
+            sqlConnection = new SqlConnection(builder.ConnectionString);
             storageAccount = new CloudStorageAccount(
         new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials(
             "ajsharmstorage", "XY2JE3zk3zUV1wRzMoWemOJ1SUbIJoMFJG8yiX79clU9//2VS0Bxg7G6e/Hx4XOWWORqKSfk/H64Okai8sTftg=="), true);
@@ -31,6 +38,13 @@ namespace BackendApi.Controllers
         public IActionResult FetchUserData(string username)
         {
             var result = getAllEntitiesInPartition<UserDataEntity>("UserData", username).GetAwaiter().GetResult();
+            return new ObjectResult(result);
+        }
+
+        [HttpGet("/FetchUserDataSql/{username}")]
+        public IActionResult FetchUserDataSql(string username)
+        {
+            var result = getEntitiesFromSql(username);
             return new ObjectResult(result);
         }
 
@@ -80,6 +94,22 @@ namespace BackendApi.Controllers
             return new ObjectResult(result.Result);
         }
 
+        [HttpPost("/AddUserDataSql")]
+        [ActionName("/AddUserDataSql")]
+        public IActionResult AddUserDataSql([FromBody] UserDataEntity userData)
+        {
+            addEntityToSql(userData);
+            return new OkObjectResult("Saved successfully");
+        }
+
+        [HttpGet("/DeleteUserDataSql/{id}")]
+        [ActionName("/DeleteUserDataSql")]
+        public IActionResult DeleteUserDataSql(string id)
+        {
+            deleteEntityFromSql(id);
+            return new OkObjectResult("Deleted successfully");
+        }
+
         private async Task<List<TableEntity>> getAllEntitiesInPartition<T>(string tablename, string partitionkey)
         where T : TableEntity, new()
         {
@@ -120,6 +150,31 @@ namespace BackendApi.Controllers
                 return (T)retrievedResult.Result;
             else
                 return null;
+        }
+
+        private void addEntityToSql(UserDataEntity entity){
+            sqlConnection.Open();       
+            String query = "EXEC dbo.AddAreaToMarket '" + entity.id + "', '" + entity.username + "', '" + entity.areaName + "', '" + entity.polygon + "'";
+            SqlCommand command = new SqlCommand(query, sqlConnection);
+            command.ExecuteNonQueryAsync();                 
+        }
+
+        private void deleteEntityFromSql(string id){
+            sqlConnection.Open();
+            String query = "EXEC dbo.DeleteArea '" + id + "'";
+            SqlCommand command = new SqlCommand(query, sqlConnection);
+            command.ExecuteNonQueryAsync();
+        }
+
+        private object getEntitiesFromSql(string username){
+            sqlConnection.Open();
+            String query = "EXEC dbo.GetAreasByUser '" + username + "'";
+            SqlCommand command = new SqlCommand(query, sqlConnection);
+            SqlDataReader reader = command.ExecuteReader();
+            String data = "";
+            while (reader.Read())
+                data = reader.GetString(0);
+            return JsonConvert.DeserializeObject(data);
         }
     }
 }
