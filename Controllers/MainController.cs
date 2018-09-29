@@ -44,7 +44,7 @@ namespace BackendApi.Controllers
         [HttpGet("/FetchUserDataSql/{username}")]
         public IActionResult FetchUserDataSql(string username)
         {
-            var result = getEntitiesFromSql(username);
+            var result = getEntitiesByUserFromSql(username);
             return new ObjectResult(result);
         }
 
@@ -166,7 +166,7 @@ namespace BackendApi.Controllers
             command.ExecuteNonQueryAsync();
         }
 
-        private object getEntitiesFromSql(string username){
+        private object getEntitiesByUserFromSql(string username){
             sqlConnection.Open();
             String query = "EXEC dbo.GetAreasByUser '" + username + "'";
             SqlCommand command = new SqlCommand(query, sqlConnection);
