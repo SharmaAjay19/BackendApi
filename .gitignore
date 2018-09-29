@@ -2,3 +2,6 @@
 /wwwroot
 /appsettings.Development.json
 /.vscode
+/.appcredentials.json
+/.dbcredentials.json
+/.BkpMainController.txt
