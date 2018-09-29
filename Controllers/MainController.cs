@@ -21,14 +21,14 @@ namespace BackendApi.Controllers
         SqlConnection sqlConnection;
         public MainController(){
             SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder();
-            builder.DataSource = "ajsharm.database.windows.net"; 
-            builder.UserID = "ajsharm";            
-            builder.Password = "Ime&144!";     
+            builder.DataSource = "__DataSource__"; 
+            builder.UserID = "__UserID__";            
+            builder.Password = "__Password__";     
             builder.InitialCatalog = "areamarket";
             sqlConnection = new SqlConnection(builder.ConnectionString);
             storageAccount = new CloudStorageAccount(
         new Microsoft.WindowsAzure.Storage.Auth.StorageCredentials(
-            "ajsharmstorage", "XY2JE3zk3zUV1wRzMoWemOJ1SUbIJoMFJG8yiX79clU9//2VS0Bxg7G6e/Hx4XOWWORqKSfk/H64Okai8sTftg=="), true);
+            "ajsharmstorage", "__StorageAccountKey__"), true);
             tableClient = storageAccount.CreateCloudTableClient();
         }
 
